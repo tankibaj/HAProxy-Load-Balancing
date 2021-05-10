@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+help() {
+    local -r flagsTable=$(
+        printf "%s\n" \
+            "-S, --start, start         Run HAProxy and application containers" \
+            "-D, --destroy, destroy     Destroy everything related to HAProxy" \
+            "-s, -status, status        HAProxy containers status" \
+            "-h, --help, help           Display help list"
+    )
+    echo -e "$flagsTable"
+}
+
+cert() {
+    if [[ ! -f ./certs/test.pem ]]; then
+        openssl req -nodes -x509 -newkey rsa:2048 -keyout ./certs/test.key -out ./certs/test.crt -days 30
+        cat ./certs/test.key ./certs/test.crt >./certs/test.pem
+    fi
+}
+
+OPTION=$1
+case "$OPTION" in
+-S | --start | start)
+    cert
+    docker-compose up -d
+    ;;
+-D | --destroy | destroy)
+    docker-compose down
+    ;;
+-s | --status | status)
+    docker-compose ps
+    ;;
+-h | --help | help)
+    help
+    ;;
+*)
+    help
+    exit
+    ;;
+esac
