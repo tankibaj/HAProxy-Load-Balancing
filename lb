@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+
+if [[ ! $(which docker) && $(docker-compose --version) ]]; then
+    echo "Please install docker and docker-compose"
+    exit 1
+fi
+
 help() {
     local -r flagsTable=$(
         printf "%s\n" \
